@@ -18,9 +18,16 @@ public class Card : MonoBehaviour
     // ボタンがクリックされたときに実行される
     public void OnClickCard()
     {
+
+        // ⭐️【ここを追加！】画面のレフェリーを探して、「いまロック中？」と聞く
+        // もしロック中（true）だったら、この下の処理を何もせずに「帰れ（return）」と命じる！
+        if (Object.FindFirstObjectByType<GameManager>().IsLocking == true)
+        {
+            return;
+        }
+
         // クリックされたら、文字を「？」から「自分の数字」に書き換える！
         cardText.text = cardNumber.ToString();
-
         // 📢【新しく追加する行】画面にいるGameManagerを探して、「めくられたよ！」と報告する
         //FindObjectOfType<GameManager>().CardFlipped(this);
         // 〇 新しい書き方（これに書き換える！）
