@@ -22,8 +22,18 @@ public class Card : MonoBehaviour
         cardText.text = cardNumber.ToString();
 
         // 📢【新しく追加する行】画面にいるGameManagerを探して、「めくられたよ！」と報告する
-        FindObjectOfType<GameManager>().CardFlipped(this);
+        //FindObjectOfType<GameManager>().CardFlipped(this);
+        // 〇 新しい書き方（これに書き換える！）
+        Object.FindFirstObjectByType<GameManager>().CardFlipped(this);
 
         Debug.Log("めくったカードの数字は: " + cardNumber);
-    }
+
+    }// ちゃんとここでOnClickCardのお部屋が終了！
+
+    // ⭐️【独立した新しいお部屋】レフェリーから呼ばれたら、文字を「？」に戻す
+    public void HideCard()
+    {
+        cardText.text = "?";
+    } // HideCardのお部屋終了！
+
 }
