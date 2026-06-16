@@ -33,7 +33,14 @@ public class GameManager : MonoBehaviour
             if (firstCard.cardNumber == clickedCard.cardNumber)
             {
                 // ⭕️ 正解の時
-                Debug.Log("「正解！！！ペア成立です！」");
+                Debug.Log("「正解！！！ロックをかけて1秒後に消去するよ」");
+
+                // ⭐️ハズレの時と同じように、1秒待つ間に連打されないようにロックをかける！
+                isLocking = true;
+
+                // ⭐️【新設】正解の時専用の、1秒待って消すコルーチンをスタート！
+                StartCoroutine(DeleteCardsAfterDelay(firstCard, clickedCard));
+
                 flippedCount = 0;
                 firstCard = null;
             }
@@ -64,5 +71,21 @@ public class GameManager : MonoBehaviour
         isLocking = false;
 
         Debug.Log("「裏に戻したから、ロックを解除したよ！」");
+    }
+
+    // ⭐️【新設】1秒待ってから、2枚のカードを画面から消し去る魔法
+    private IEnumerator DeleteCardsAfterDelay(Card card1, Card card2)
+    {
+        // ① 1秒間、じっと待つ
+        yield return new WaitForSeconds(1.0f);
+
+        // ② さっきカード側に作った「消えろ！」という命令（メソッド）を呼び出す！
+        card1.DeleteCard();
+        card2.DeleteCard();
+
+        // ③ 消し終わったら、ロックを解除して次の入力を受け付ける
+        isLocking = false;
+
+        Debug.Log("「ペアを消去したから、ロックを解除したよ！」");
     }
 }

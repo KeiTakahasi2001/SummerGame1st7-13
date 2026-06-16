@@ -26,13 +26,16 @@ public class Card : MonoBehaviour
             return;
         }
 
-        // クリックされたら、文字を「？」から「自分の数字」に書き換える！
-        cardText.text = cardNumber.ToString();
-        // 📢【新しく追加する行】画面にいるGameManagerを探して、「めくられたよ！」と報告する
-        //FindObjectOfType<GameManager>().CardFlipped(this);
-        // 〇 新しい書き方（これに書き換える！）
-        Object.FindFirstObjectByType<GameManager>().CardFlipped(this);
+        // ⭐️【ここを新しく追加！】
+        // もし、今の文字が「?」じゃないなら（すでに数字がめくられているなら）無視して帰る！
+        if (cardText.text != "?")
+        {
+            return;
+        }
 
+        
+        cardText.text = cardNumber.ToString();// クリックされたら、文字を「？」から「自分の数字」に書き換える！
+        Object.FindFirstObjectByType<GameManager>().CardFlipped(this);// 📢【新しく追加する行】画面にいるGameManagerを探して、「めくられたよ！」と報告する
         Debug.Log("めくったカードの数字は: " + cardNumber);
 
     }// ちゃんとここでOnClickCardのお部屋が終了！
@@ -42,5 +45,19 @@ public class Card : MonoBehaviour
     {
         cardText.text = "?";
     } // HideCardのお部屋終了！
+
+    // ⭐️【新しく追加する命令】正解の時、レフェリーから呼ばれて画面から消える
+    // ⭐️【修正版】場所をズラさずに、見た目とボタンだけを消し去る
+    public void DeleteCard()
+    {
+        // ① ボタンの機能（クリックできる機能）をオフにする
+        GetComponent<UnityEngine.UI.Button>().enabled = false;
+
+        // ② 文字の部品（TextMeshPro）を非表示にして見えなくする
+        cardText.enabled = false;
+
+        // ③ ついでにボタンの背景（画像）も見えなくする
+        GetComponent<UnityEngine.UI.Image>().enabled = false;
+    }
 
 }
