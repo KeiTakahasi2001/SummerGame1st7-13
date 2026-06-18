@@ -1,5 +1,7 @@
 using UnityEngine;
 using System.Collections;
+// ⭐️【新設】「リスト（List）」という、カードの束を管理するパックを使えるようにします！
+using System.Collections.Generic;
 
 public class GameManager : MonoBehaviour
 {
@@ -14,6 +16,52 @@ public class GameManager : MonoBehaviour
     public bool IsLocking
     {
         get { return isLocking; }
+    }
+
+    // ⭐️【新設】ゲームが始まった瞬間に動く部屋
+    void Start()
+    {
+        ShuffleAndAssignCards();
+    }
+
+    // ⭐️【新設】カードを集めて、シャッフルして、数字を配る魔法のメソッド
+    private void ShuffleAndAssignCards()
+    {
+        // ① 画面にある「Card」スクリプトがついたオブジェクトを全部見つけて、リスト（束）にする！
+        List<Card> allCards = new List<Card>(Object.FindObjectsByType<Card>(FindObjectsSortMode.None));
+
+        // ⭐️【新設】② 16枚分の数字を入れるための「数字専用のメモ用紙（リスト）」を用意する
+        List<int> numbers = new List<int>();
+
+        // ⭐️【新設】③ 1から8までの数字を、2回ずつループしてメモに書き込む！
+        // （これでメモ帳の中身が [1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8] になります）
+        for (int i = 1; i <= 8; i++)
+        {
+            numbers.Add(i); // 1回目
+            numbers.Add(i); // 2回目
+        }
+
+        // ⭐️【新設】④【超重要】数字のメモ帳をバラバラにシャッフルする！
+        // 「フィッシャー・イェーツのシャッフル」という有名なアルゴリズム（手順）です
+        for (int i = numbers.Count - 1; i > 0; i--)
+        {
+            // 0からi番目の中から、ランダムで1つ選ぶ
+            int randomIndex = Random.Range(0, i + 1);
+
+            // 選ばれた数字と、今の位置の数字を「入れ替える」！
+            int temp = numbers[i];
+            numbers[i] = numbers[randomIndex];
+            numbers[randomIndex] = temp;
+        }
+
+        // ⭐️【新設】⑤ バラバラになった数字を、16枚のカードに上から順番に配る！
+        for (int i = 0; i < allCards.Count; i++)
+        {
+            // カード側の cardNumber を、シャッフル済みの数字で上書きしちゃう！
+            allCards[i].cardNumber = numbers[i];
+        }
+
+        Debug.Log("16枚のカードに、シャッフルした数字を配り終わったよ！");
     }
 
     public void CardFlipped(Card clickedCard)
