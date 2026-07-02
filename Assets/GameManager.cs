@@ -27,18 +27,20 @@ public class GameManager : MonoBehaviour
     // ⭐️【新設】カードを集めて、シャッフルして、数字を配る魔法のメソッド
     private void ShuffleAndAssignCards()
     {
-        // ① 画面にある「Card」スクリプトがついたオブジェクトを全部見つけて、リスト（束）にする！
+        // ① 画面にあるカードを全員集合させる（16枚だったり、20枚だったりする）
         List<Card> allCards = new List<Card>(Object.FindObjectsByType<Card>(FindObjectsSortMode.None));
 
-        // ⭐️【新設】② 16枚分の数字を入れるための「数字専用のメモ用紙（リスト）」を用意する
+        // ⭐️【新設】集まったカードの枚数から、必要なペアの数を自動計算する！
+        // （16枚なら 16 / 2 = 8ペア、20枚なら 20 / 2 = 10ペア になる！）
+        int pairCount = allCards.Count / 2;
+
         List<int> numbers = new List<int>();
 
-        // ⭐️【新設】③ 1から8までの数字を、2回ずつループしてメモに書き込む！
-        // （これでメモ帳の中身が [1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8] になります）
-        for (int i = 1; i <= 8; i++)
+        // ⭐️【ここを修正！】「8」と直接書くのをやめて、自動計算した「pairCount」にする！
+        for (int i = 1; i <= pairCount; i++)
         {
-            numbers.Add(i); // 1回目
-            numbers.Add(i); // 2回目
+            numbers.Add(i);
+            numbers.Add(i);
         }
 
         // ⭐️【新設】④【超重要】数字のメモ帳をバラバラにシャッフルする！
