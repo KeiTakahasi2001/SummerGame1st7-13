@@ -150,17 +150,24 @@ public class GameManager : MonoBehaviour
     // ⭐️【新設】1秒待ってから、2枚のカードを画面から消し去る魔法
     private IEnumerator DeleteCardsAfterDelay(Card card1, Card card2)
     {
-        // ① 1秒間、じっと待つ
-        yield return new WaitForSeconds(1.0f);
+        // ① 1秒間待たずに、すぐに「判定中」という雰囲気を出すために0.3秒だけ待つ
+        yield return new WaitForSeconds(0.3f);
 
-        // ② さっきカード側に作った「消えろ！」という命令（メソッド）を呼び出す！
+        // ⭐️【新設】ここ！カードを実際に消す前に、2枚に「弾けろ！」という命令を送る！
+        card1.PopUpAnimation();
+        card2.PopUpAnimation();
+
+        // ② アニメーションが動いている間、ちょっとだけ待つ（0.2秒待つ）
+        yield return new WaitForSeconds(0.2f);
+
+        // ③ ここでカードを画面から消し去る
         card1.DeleteCard();
         card2.DeleteCard();
 
-        // ⭐️【これがない！】カードが消えたあと、もし画面に1枚もカードが残ってないならゲームクリア！
+        // ④ カードが消えたあと、もし画面に1枚もカードが残ってないならゲームクリア！
         if (Object.FindObjectsByType<Card>(FindObjectsSortMode.None).Length == 0)
         {
-            isGameClear = true; // ⏰ これでUpdateのタイマーがピタッと止まります！
+            isGameClear = true; // ⏰ タイマーを止める！
             Debug.Log("ゲームクリア！おめでとう！");
         }
 
