@@ -2,17 +2,26 @@ using UnityEngine;
 using System.Collections;
 // ⭐️【新設】「リスト（List）」という、カードの束を管理するパックを使えるようにします！
 using System.Collections.Generic;
+using TMPro; // ⭐️【新設】TextMeshProを使うための魔法の呪文！
 
 public class GameManager : MonoBehaviour
 {
     private int flippedCount = 0;
     private Card firstCard;
-
-    // ⭐️【新設】1秒待っている間、入力を禁止するための「鍵」
+    //1秒待っている間、入力を禁止するための「鍵」
     // 最初はロックしていない（false）状態
     private bool isLocking = false;
 
-    // ⭐️【新設】外部のカードから「いま画面はロックされてる？」と確認するための窓口
+    // 手数とタイマーのための変数たち
+    private int flipCount = 0;       // めくった回数（手数）
+    private float timer = 0f;        // 経過時間（タイマー）
+    private bool isGameClear = false; // ゲームがクリアされたかどうかの旗
+
+    // Unityの画面で作ったテキスト部品をここにドラッグ＆ドロップで紐付けます
+    public TextMeshProUGUI scoreText;
+    public TextMeshProUGUI timerText;
+
+    // 外部のカードから「いま画面はロックされてる？」と確認するための窓口
     public bool IsLocking
     {
         get { return isLocking; }
@@ -22,6 +31,17 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         ShuffleAndAssignCards();
+        UpdateScoreText();
+    }
+
+    void Update()
+    {
+        // もしゲームクリア「じゃない」なら、時間を進める！
+        if (isGameClear == false)
+        {
+            timer += Time.deltaTime; // ⏰ 前回の居残りでやった、時間を足していく魔法！
+            timerText.text = "タイム: " + timer.ToString("F1") + "秒"; // 「F1」は小数第1位まで表示するお守り
+        }
     }
 
     // ⭐️【新設】カードを集めて、シャッフルして、数字を配る魔法のメソッド
@@ -80,6 +100,10 @@ public class GameManager : MonoBehaviour
         {
             Debug.Log("「2枚目がめくられたから判定するよ！」");
 
+            // ⭐️【これがない！】2枚めくったので手数を1増やして、画面を書き換える！
+            flipCount++;
+            UpdateScoreText();
+
             if (firstCard.cardNumber == clickedCard.cardNumber)
             {
                 // ⭕️ 正解の時
@@ -133,9 +157,20 @@ public class GameManager : MonoBehaviour
         card1.DeleteCard();
         card2.DeleteCard();
 
+        // ⭐️【これがない！】カードが消えたあと、もし画面に1枚もカードが残ってないならゲームクリア！
+        if (Object.FindObjectsByType<Card>(FindObjectsSortMode.None).Length == 0)
+        {
+            isGameClear = true; // ⏰ これでUpdateのタイマーがピタッと止まります！
+            Debug.Log("ゲームクリア！おめでとう！");
+        }
+
         // ③ 消し終わったら、ロックを解除して次の入力を受け付ける
         isLocking = false;
 
         Debug.Log("「ペアを消去したから、ロックを解除したよ！」");
+    }
+    private void UpdateScoreText()
+    {
+        scoreText.text = "手数: " + flipCount + "回";
     }
 }
