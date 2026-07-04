@@ -586,6 +586,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Card
   cardNumber: 4
+  defaultColor: {r: 1, g: 0.8235294, b: 0.8980392, a: 1}
+  flippedColor: {r: 1, g: 0.9019608, b: 0.42745098, a: 1}
 --- !u!1 &158812347
 GameObject:
   m_ObjectHideFlags: 0
@@ -870,6 +872,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Card
   cardNumber: 4
+  defaultColor: {r: 1, g: 0.8235294, b: 0.8980392, a: 1}
+  flippedColor: {r: 1, g: 0.9019608, b: 0.42745098, a: 1}
 --- !u!1 &227013921
 GameObject:
   m_ObjectHideFlags: 0
@@ -1370,6 +1374,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Card
   cardNumber: 6
+  defaultColor: {r: 1, g: 0.8235294, b: 0.8980392, a: 1}
+  flippedColor: {r: 1, g: 0.9019608, b: 0.42745098, a: 1}
 --- !u!1 &329580289
 GameObject:
   m_ObjectHideFlags: 0
@@ -1517,6 +1523,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Card
   cardNumber: 8
+  defaultColor: {r: 1, g: 0.8235294, b: 0.8980392, a: 1}
+  flippedColor: {r: 1, g: 0.9019608, b: 0.42745098, a: 1}
 --- !u!1 &370334807
 GameObject:
   m_ObjectHideFlags: 0
@@ -1938,6 +1946,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Card
   cardNumber: 2
+  defaultColor: {r: 1, g: 0.8235294, b: 0.8980392, a: 1}
+  flippedColor: {r: 1, g: 0.9019608, b: 0.42745098, a: 1}
 --- !u!1 &635570889
 GameObject:
   m_ObjectHideFlags: 0
@@ -2085,6 +2095,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Card
   cardNumber: 5
+  defaultColor: {r: 1, g: 0.8235294, b: 0.8980392, a: 1}
+  flippedColor: {r: 1, g: 0.9019608, b: 0.42745098, a: 1}
 --- !u!1 &747505308
 GameObject:
   m_ObjectHideFlags: 0
@@ -2369,6 +2381,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Card
   cardNumber: 3
+  defaultColor: {r: 1, g: 0.8235294, b: 0.8980392, a: 1}
+  flippedColor: {r: 1, g: 0.9019608, b: 0.42745098, a: 1}
 --- !u!1 &766973234
 GameObject:
   m_ObjectHideFlags: 0
@@ -2653,6 +2667,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Card
   cardNumber: 1
+  defaultColor: {r: 1, g: 0.8235294, b: 0.8980392, a: 1}
+  flippedColor: {r: 1, g: 0.9019608, b: 0.42745098, a: 1}
 --- !u!1 &951302020
 GameObject:
   m_ObjectHideFlags: 0
@@ -3211,6 +3227,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Card
   cardNumber: 3
+  defaultColor: {r: 1, g: 0.8235294, b: 0.8980392, a: 1}
+  flippedColor: {r: 1, g: 0.9019608, b: 0.42745098, a: 1}
 --- !u!1 &1005199000
 GameObject:
   m_ObjectHideFlags: 0
@@ -3495,6 +3513,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Card
   cardNumber: 1
+  defaultColor: {r: 1, g: 0.8235294, b: 0.8980392, a: 1}
+  flippedColor: {r: 1, g: 0.9019608, b: 0.42745098, a: 1}
 --- !u!1 &1139229154
 GameObject:
   m_ObjectHideFlags: 0
@@ -3855,6 +3875,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Card
   cardNumber: 8
+  defaultColor: {r: 1, g: 0.8235294, b: 0.8980392, a: 1}
+  flippedColor: {r: 1, g: 0.9019608, b: 0.42745098, a: 1}
 --- !u!1 &1201665550
 GameObject:
   m_ObjectHideFlags: 0
@@ -4139,6 +4161,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Card
   cardNumber: 2
+  defaultColor: {r: 1, g: 0.8235294, b: 0.8980392, a: 1}
+  flippedColor: {r: 1, g: 0.9019608, b: 0.42745098, a: 1}
 --- !u!1 &1476976535
 GameObject:
   m_ObjectHideFlags: 0
@@ -4423,6 +4447,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Card
   cardNumber: 7
+  defaultColor: {r: 1, g: 0.8235294, b: 0.8980392, a: 1}
+  flippedColor: {r: 1, g: 0.9019608, b: 0.42745098, a: 1}
 --- !u!1 &1580158890
 GameObject:
   m_ObjectHideFlags: 0
@@ -4570,6 +4596,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Card
   cardNumber: 5
+  defaultColor: {r: 1, g: 0.8235294, b: 0.8980392, a: 1}
+  flippedColor: {r: 1, g: 0.9019608, b: 0.42745098, a: 1}
 --- !u!1 &1608958197
 GameObject:
   m_ObjectHideFlags: 0
@@ -4854,6 +4882,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Card
   cardNumber: 6
+  defaultColor: {r: 1, g: 0.8235294, b: 0.8980392, a: 1}
+  flippedColor: {r: 1, g: 0.9019608, b: 0.42745098, a: 1}
 --- !u!1 &1728060271
 GameObject:
   m_ObjectHideFlags: 0
@@ -5242,6 +5272,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Card
   cardNumber: 7
+  defaultColor: {r: 1, g: 0.8235294, b: 0.8980392, a: 1}
+  flippedColor: {r: 1, g: 0.9019608, b: 0.42745098, a: 1}
 --- !u!1 &2068347088
 GameObject:
   m_ObjectHideFlags: 0
