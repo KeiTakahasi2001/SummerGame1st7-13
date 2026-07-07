@@ -36,7 +36,7 @@ public class Card : MonoBehaviour
         cardImage.color = flippedColor;// 安全確認が「すべてセーフ！」とわかってから、初めて色を黄色にする！！！
 
         cardText.text = cardNumber.ToString();// クリックされたら、文字を「？」から「自分の数字」に書き換える！
-        Object.FindFirstObjectByType<GameManager>().CardFlipped(this);// 📢【新しく追加する行】画面にいるGameManagerを探して、「めくられたよ！」と報告する
+        Object.FindFirstObjectByType<GameManager>().CardFlipped(this);// 画面にいるGameManagerを探して、「めくられたよ！」と報告する
         Debug.Log("めくったカードの数字は: " + cardNumber);
 
     }
@@ -45,7 +45,7 @@ public class Card : MonoBehaviour
     public void HideCard()
     {
         cardText.text = "?"; // レフェリーから呼ばれたら、文字を「？」に戻す
-        cardImage.color = defaultColor; // 👈【この1行を追加！】色を裏面の色に戻してあげる！
+        cardImage.color = defaultColor; // 色を裏面の色に戻してあげる！
     } 
     
     public void DeleteCard()// ⭐️【修正版】場所をズラさずに、見た目とボタンだけを消し去る

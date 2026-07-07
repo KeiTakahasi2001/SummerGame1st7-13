@@ -3,6 +3,7 @@ using System.Collections;
 // ⭐️【新設】「リスト（List）」という、カードの束を管理するパックを使えるようにします！
 using System.Collections.Generic;
 using TMPro; // ⭐️【新設】TextMeshProを使うための魔法の呪文！
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -12,14 +13,17 @@ public class GameManager : MonoBehaviour
     // 最初はロックしていない（false）状態
     private bool isLocking = false;
 
-    // 手数とタイマーのための変数たち
-    private int flipCount = 0;       // めくった回数（手数）
-    private float timer = 0f;        // 経過時間（タイマー）
+    // 手数とタイマーのための変数たち（staticにしてクリア画面に持っていけるようにする！）
+    public static int flipCount = 0;// めくった回数（手数）
+    public static float timer = 0f;// 経過時間（タイマー）
     private bool isGameClear = false; // ゲームがクリアされたかどうかの旗
+    private float startDelayTimer = 0f; // 最初の「ちょっと待つ時間」を数えるタイマー
+    private bool isReady = true;        // いま準備中（待機中）かどうかの旗
 
     // Unityの画面で作ったテキスト部品をここにドラッグ＆ドロップで紐付けます
     public TextMeshProUGUI scoreText;
     public TextMeshProUGUI timerText;
+    public TextMeshProUGUI readyText;
 
     // 外部のカードから「いま画面はロックされてる？」と確認するための窓口
     public bool IsLocking
@@ -30,17 +34,46 @@ public class GameManager : MonoBehaviour
     // ⭐️【新設】ゲームが始まった瞬間に動く部屋
     void Start()
     {
+        flipCount = 0;
+        timer = 0f;// 新しくゲームを始めるたびに、記録を0にリセットする！
+
         ShuffleAndAssignCards();
         UpdateScoreText();
     }
 
     void Update()
     {
-        // もしゲームクリア「じゃない」なら、時間を進める！
-        if (isGameClear == false)
+        if (isReady == true) // ⭐️【カウントダウン中（最初の3秒間）】
         {
-            timer += Time.deltaTime; // ⏰ 前回の居残りでやった、時間を足していく魔法！
-            timerText.text = "タイム: " + timer.ToString("F1") + "秒"; // 「F1」は小数第1位まで表示するお守り
+            startDelayTimer += Time.deltaTime;
+            int displayCount = (int)(3.0f - startDelayTimer + 1.0f);
+            readyText.text = displayCount.ToString();// ❶ 真ん中のデカ文字に「3、2、1」を表示（ひらがなで文字化け対策！）
+
+            timerText.text = "タイム: " + timer.ToString("F1") + "秒";// ❷ 左上のタイマーには「タイム: 0.0秒」って静かに表示しておく！
+
+            if (startDelayTimer >= 3.0f)
+            {
+                isReady = false; // 本編スタート！
+                readyText.gameObject.SetActive(false); // ⭐️【新設】用が済んだので真ん中のデカ文字を消す！
+            }
+            return;
+        }
+
+        // ❶ もしすでにゲームクリアしているなら、これ以上下の処理は何もせずにここで終わり！
+        if (isGameClear == true) return;
+
+        // ❷ ⏰ タイムを毎フレーム進めて、画面に表示する！
+        timer += Time.deltaTime;
+        timerText.text = "タイム: " + timer.ToString("F1") + "秒";
+
+        // ❸ ⭐️【新設】もしタイマーが「60秒」を超えたら…恐怖のタイムアップ！
+        if (timer >= 60.0f)
+        {
+            isGameClear = true; // タイマーを止めるためにフラグをONにする
+            Debug.Log("タイムアップ！ゲームオーバー！");
+
+            // ゲームオーバー画面へ強制ジャンプ！
+            UnityEngine.SceneManagement.SceneManager.LoadScene("GameOverScene");
         }
     }
 
@@ -56,19 +89,18 @@ public class GameManager : MonoBehaviour
 
         List<int> numbers = new List<int>();
 
-        // ⭐️【ここを修正！】「8」と直接書くのをやめて、自動計算した「pairCount」にする！
+        //「8」と直接書くのをやめて、自動計算した「pairCount」にする！
         for (int i = 1; i <= pairCount; i++)
         {
             numbers.Add(i);
             numbers.Add(i);
         }
 
-        // ⭐️【新設】④【超重要】数字のメモ帳をバラバラにシャッフルする！
+        // ④【超重要】数字のメモ帳をバラバラにシャッフルする！
         // 「フィッシャー・イェーツのシャッフル」という有名なアルゴリズム（手順）です
         for (int i = numbers.Count - 1; i > 0; i--)
         {
-            // 0からi番目の中から、ランダムで1つ選ぶ
-            int randomIndex = Random.Range(0, i + 1);
+            int randomIndex = Random.Range(0, i + 1);// 0からi番目の中から、ランダムで1つ選ぶ
 
             // 選ばれた数字と、今の位置の数字を「入れ替える」！
             int temp = numbers[i];
@@ -76,11 +108,9 @@ public class GameManager : MonoBehaviour
             numbers[randomIndex] = temp;
         }
 
-        // ⭐️【新設】⑤ バラバラになった数字を、16枚のカードに上から順番に配る！
-        for (int i = 0; i < allCards.Count; i++)
+        for (int i = 0; i < allCards.Count; i++)// ⑤ バラバラになった数字を、16枚のカードに上から順番に配る！
         {
-            // カード側の cardNumber を、シャッフル済みの数字で上書きしちゃう！
-            allCards[i].cardNumber = numbers[i];
+            allCards[i].cardNumber = numbers[i];// カード側の cardNumber を、シャッフル済みの数字で上書きしちゃう！
         }
 
         Debug.Log("16枚のカードに、シャッフルした数字を配り終わったよ！");
@@ -88,6 +118,9 @@ public class GameManager : MonoBehaviour
 
     public void CardFlipped(Card clickedCard)
     {
+        // ⭐️【追加】まだ準備中（3秒経ってない）なら、カードをめくる処理を無視してここで追い返す！
+        if (isReady == true) return;
+
         flippedCount++;
         Debug.Log("「いま " + flippedCount + " 枚目のカードがめくられたよ！」");
 
@@ -100,7 +133,7 @@ public class GameManager : MonoBehaviour
         {
             Debug.Log("「2枚目がめくられたから判定するよ！」");
 
-            // ⭐️【これがない！】2枚めくったので手数を1増やして、画面を書き換える！
+            // 2枚めくったので手数を1増やして、画面を書き換える！
             flipCount++;
             UpdateScoreText();
 
@@ -164,11 +197,24 @@ public class GameManager : MonoBehaviour
         card1.DeleteCard();
         card2.DeleteCard();
 
-        // ④ カードが消えたあと、もし画面に1枚もカードが残ってないならゲームクリア！
-        if (Object.FindObjectsByType<Card>(FindObjectsSortMode.None).Length == 0)
+        int activeCards = 0;// ④今画面に残っている「ボタンがまだオン（有効）なカード」をその場で数える！
+        foreach (Card c in Object.FindObjectsByType<Card>(FindObjectsSortMode.None))
         {
-            isGameClear = true; // ⏰ タイマーを止める！
+            if (c.GetComponent<UnityEngine.UI.Button>().enabled == true)
+            {
+                activeCards++;
+            }
+        }
+
+        // ⭐️ 有効なカードが0枚（全部めくり終わった）ならクリア！
+        if (activeCards == 0)
+        {
+            isGameClear = true; //  タイマーを止める！
             Debug.Log("ゲームクリア！おめでとう！");
+
+            yield return new WaitForSeconds(1.0f);// 画面を切り替える前に、2.0秒だけ「余韻の時間」を待つ！
+
+            UnityEngine.SceneManagement.SceneManager.LoadScene("ClearScene"); // 自動でジャンプ！
         }
 
         // ③ 消し終わったら、ロックを解除して次の入力を受け付ける
