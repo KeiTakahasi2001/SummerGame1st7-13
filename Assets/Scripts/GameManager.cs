@@ -20,10 +20,27 @@ public class GameManager : MonoBehaviour
     private float startDelayTimer = 0f; // 最初の「ちょっと待つ時間」を数えるタイマー
     private bool isReady = true;        // いま準備中（待機中）かどうかの旗
 
+    // 💡【追加】さっき鳴らした数字を覚えておくためのメモ帳
+    private int lastDisplayedCount = -1;
+
     // Unityの画面で作ったテキスト部品をここにドラッグ＆ドロップで紐付けます
     public TextMeshProUGUI scoreText;
     public TextMeshProUGUI timerText;
     public TextMeshProUGUI readyText;
+
+    // GameManagerにスピーカー（AudioSource）を持たせる
+    private AudioSource audioSource;
+
+    // お気に入りの効果音データを入れておく箱たち
+    [Header("効果音シリーズ")]
+    [SerializeField] private AudioClip correctSound;    // 正解（ティロリーン！）
+    [SerializeField] private AudioClip incorrectSound;  // 不正解（ブブー）
+    //[SerializeField] private AudioClip clearSound;      // クリア音
+    //[SerializeField] private AudioClip gameOverSound;   // ゲームオーバー音
+
+    // 💡【追加】カウントダウン用の音をセットする箱
+    [SerializeField] private AudioClip countdownSound;  // 「3・2・1」の音（ピピッなど）
+    [SerializeField] private AudioClip startVoiceSound;  // 「Go!」の音（パーン！など）
 
     // 外部のカードから「いま画面はロックされてる？」と確認するための窓口
     public bool IsLocking
@@ -31,11 +48,20 @@ public class GameManager : MonoBehaviour
         get { return isLocking; }
     }
 
+    // カードから「いま何枚目がめくられた？」を確認するための窓口
+    public int FlippedCount
+    {
+        get { return flippedCount; }
+    }
+
     // ゲームが始まった瞬間に動く部屋
     void Start()
     {
         flipCount = 0;
         timer = 0f;// 新しくゲームを始めるたびに、記録を0にリセットする！
+
+        // 自分に付いているスピーカー（AudioSource）を自動で見つけて持ってくる
+        audioSource = GetComponent<AudioSource>();
 
         ShuffleAndAssignCards();
         UpdateScoreText();
@@ -47,13 +73,29 @@ public class GameManager : MonoBehaviour
         {
             startDelayTimer += Time.deltaTime;
             int displayCount = (int)(3.0f - startDelayTimer + 1.0f);
-            readyText.text = displayCount.ToString();// ❶ 真ん中のデカ文字に「3、2、1」を表示（ひらがなで文字化け対策！）
+
+            // 💡【修正：順番を一番上に！】数字が変わった「その瞬間」、文字が変わるより前に音を鳴らす！
+            if (displayCount != lastDisplayedCount && displayCount >= 1 && displayCount <= 3)
+            {
+                lastDisplayedCount = displayCount;
+
+                // ⭐️【裏技】再生の前に一瞬だけ音を「0.01秒でいいから準備」させてから鳴らす
+                // これにより音の再生エンジンが「あ、次鳴るな」と準備して遅延を消します
+                audioSource.clip = countdownSound;
+                audioSource.Play();
+            }
+
+            readyText.text = displayCount.ToString();// ❶ 真ん中のデカ文字に「3、2、1」を表示
 
             timerText.text = "のこり: 60.0秒";// ❷ 左上のタイマーにはゲーム開始前は「のこり: 60.0秒」で止めておく
 
             if (startDelayTimer >= 3.0f)
             {
                 isReady = false; // 本編スタート！
+
+                // 💡【修正：これもデカ文字を消す前に！】「Go!」の音を鳴らす！
+                PlaySound(startVoiceSound);
+
                 readyText.gameObject.SetActive(false); // ⭐️【新設】用が済んだので真ん中のデカ文字を消す！
             }
             return;
@@ -62,27 +104,22 @@ public class GameManager : MonoBehaviour
         // ❶ もしすでにゲームクリアしているなら、これ以上下の処理は何もせずにここで終わり！
         if (isGameClear == true) return;
 
-        
-        timer += Time.deltaTime;// タイムを毎フレーム進める（裏では0秒から順に足していく！）
-     
-        float remainingTime = 60.0f - timer;//画面には「60秒から引き算した残り時間」を表示する！
-
-        if (remainingTime < 0f) remainingTime = 0f;// マイナス秒にならないようにガード（0秒で止める）
-
+        // （※ここから下のタイマーの処理はそのままです！）
+        timer += Time.deltaTime;
+        float remainingTime = 60.0f - timer;
+        if (remainingTime < 0f) remainingTime = 0f;
         timerText.text = "のこり: " + remainingTime.ToString("F1") + "秒";
 
-        // ❸ もしタイマーが「60秒」を超えたらタイムアップ！
         if (timer >= 60.0f)
         {
-            isGameClear = true; // タイマーを止めるためにフラグをONにする
+            isGameClear = true;
             Debug.Log("タイムアップ！ゲームオーバー！");
-
-            // ゲームオーバー画面へ強制ジャンプ！
+            //PlaySound(gameOverSound);
             UnityEngine.SceneManagement.SceneManager.LoadScene("GameOverScene");
         }
     }
 
-    // ⭐️【新設】カードを集めて、シャッフルして、数字を配る魔法のメソッド
+    // カードを集めて、シャッフルして、数字を配る魔法のメソッド
     private void ShuffleAndAssignCards()
     {
         // ① 画面にあるカードを全員集合させる（16枚だったり、20枚だったりする）
@@ -147,6 +184,9 @@ public class GameManager : MonoBehaviour
                 // ⭕️ 正解の時
                 Debug.Log("「正解！！！ロックをかけて1秒後に消去するよ」");
 
+                // 💡ここで正解音（ティロリーン！）を即鳴らす！
+                PlaySound(correctSound);
+
                 // ⭐️ハズレの時と同じように、1秒待つ間に連打されないようにロックをかける！
                 isLocking = true;
 
@@ -160,6 +200,9 @@ public class GameManager : MonoBehaviour
             {
                 // ❌ ハズレの時
                 Debug.Log("「ハズレ！ロックをかけて1秒待つよ」");
+
+                // 💡ここで不正解音（ブブー）を即鳴らす！
+                PlaySound(incorrectSound);
 
                 // ⭐️【超重要】ハズレが確定した瞬間、ロックの鍵を「true（ロック中）」にする！
                 isLocking = true;
@@ -217,6 +260,9 @@ public class GameManager : MonoBehaviour
             isGameClear = true; //  タイマーを止める！
             Debug.Log("ゲームクリア！おめでとう！");
 
+            // クリア画面に飛ぶ前にクリア音を鳴らす！
+            //PlaySound(clearSound);
+
             yield return new WaitForSeconds(1.0f);// 画面を切り替える前に、2.0秒だけ「余韻の時間」を待つ！
 
             UnityEngine.SceneManagement.SceneManager.LoadScene("ClearScene"); // 自動でジャンプ！
@@ -230,5 +276,14 @@ public class GameManager : MonoBehaviour
     private void UpdateScoreText()
     {
         scoreText.text = "手数: " + flipCount + "回";
+    }
+
+    // 音を安全に鳴らすための命令
+    private void PlaySound(AudioClip clip)
+    {
+        if (audioSource != null && clip != null)
+        {
+            audioSource.PlayOneShot(clip);
+        }
     }
 }

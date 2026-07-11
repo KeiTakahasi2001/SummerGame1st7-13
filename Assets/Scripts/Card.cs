@@ -10,6 +10,10 @@ public class Card : MonoBehaviour
     [SerializeField] private Color flippedColor = Color.yellow; // 表面（めくった後）の色
 
     private UnityEngine.UI.Image cardImage; // カードの見た目（色）を変えるためのコンポーネントを入れる箱
+  
+    private AudioSource audioSource;// 音を鳴らすためのコンポーネント（スピーカー）を入れておく箱
+    
+    [SerializeField] private AudioClip flipSound;// めくったときの音（効果音データ）を入れておく箱
 
     void Start()
     {
@@ -17,6 +21,7 @@ public class Card : MonoBehaviour
         cardImage.color = defaultColor;// ⭐️ 最初は「裏面の色」にしておく
 
         cardText = GetComponentInChildren<TextMeshProUGUI>();// ゲームが始まったら、自分の下にある文字（Text）の部品を自動で見つけて持ってくる
+        audioSource = GetComponent<AudioSource>();// 自分に付いているスピーカー（AudioSource）を自動で見つけて持ってくる
     }
 
     // ボタンがクリックされたときに実行される
@@ -26,7 +31,7 @@ public class Card : MonoBehaviour
         // 画面のレフェリー（GameManager）を一旦変数に入れておく
         GameManager gm = Object.FindFirstObjectByType<GameManager>();
 
-        // 💡【新設！】ゲームがまだ「開始前（のこり60秒で停止中）」なら無視して帰る！
+        // ゲームがまだ「開始前（のこり60秒で停止中）」なら無視して帰る！
         if (gm != null && gm.timerText.text.Contains("60.0秒"))
         {
             return;
@@ -43,8 +48,16 @@ public class Card : MonoBehaviour
             return;
         }
 
-        cardImage.color = flippedColor; // 安全確認が「すべてセーフ！」とわかってから、初めて色を黄色にする！！！
+        // もし次が「2枚目」じゃないとき（＝いま1枚目をめくろうとしているとき）だけ、めくる音を鳴らす！
+        if (gm != null && gm.FlippedCount == 0)
+        {
+            if (audioSource != null && flipSound != null)
+            {
+                audioSource.PlayOneShot(flipSound);
+            }
+        }
 
+        cardImage.color = flippedColor; // 安全確認が「すべてセーフ！」とわかってから、初めて色を黄色にする！！！
         cardText.text = cardNumber.ToString(); // クリックされたら、文字を「？」から「自分の数字」に書き換える！
 
         if (gm != null)
