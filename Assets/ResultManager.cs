@@ -14,8 +14,12 @@ public class ResultManager : MonoBehaviour
         float finalTime = GameManager.timer;
 
         // 画面に映るテキストを、本物の記録に書き換える！
-        resultText.text = "手数: " + finalCount + "回\n" +
+        resultText.text = "クリア おめでとう！\n" +
+                          "手数: " + finalCount + "回\n" +
                           "タイム: " + finalTime.ToString("F1") + "秒";
+
+        //"手数: " + finalCount + "回\n" +
+        //"タイム: " + finalTime.ToString("F1") + "秒";
     }
     public void OnReplayButtonClick()
     {
