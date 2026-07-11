@@ -31,7 +31,7 @@ public class GameManager : MonoBehaviour
         get { return isLocking; }
     }
 
-    // ⭐️【新設】ゲームが始まった瞬間に動く部屋
+    // ゲームが始まった瞬間に動く部屋
     void Start()
     {
         flipCount = 0;
@@ -49,7 +49,7 @@ public class GameManager : MonoBehaviour
             int displayCount = (int)(3.0f - startDelayTimer + 1.0f);
             readyText.text = displayCount.ToString();// ❶ 真ん中のデカ文字に「3、2、1」を表示（ひらがなで文字化け対策！）
 
-            timerText.text = "タイム: " + timer.ToString("F1") + "秒";// ❷ 左上のタイマーには「タイム: 0.0秒」って静かに表示しておく！
+            timerText.text = "のこり: 60.0秒";// ❷ 左上のタイマーにはゲーム開始前は「のこり: 60.0秒」で止めておく
 
             if (startDelayTimer >= 3.0f)
             {
@@ -62,11 +62,16 @@ public class GameManager : MonoBehaviour
         // ❶ もしすでにゲームクリアしているなら、これ以上下の処理は何もせずにここで終わり！
         if (isGameClear == true) return;
 
-        // ❷ ⏰ タイムを毎フレーム進めて、画面に表示する！
-        timer += Time.deltaTime;
-        timerText.text = "タイム: " + timer.ToString("F1") + "秒";
+        
+        timer += Time.deltaTime;// タイムを毎フレーム進める（裏では0秒から順に足していく！）
+     
+        float remainingTime = 60.0f - timer;//画面には「60秒から引き算した残り時間」を表示する！
 
-        // ❸ ⭐️【新設】もしタイマーが「60秒」を超えたら…恐怖のタイムアップ！
+        if (remainingTime < 0f) remainingTime = 0f;// マイナス秒にならないようにガード（0秒で止める）
+
+        timerText.text = "のこり: " + remainingTime.ToString("F1") + "秒";
+
+        // ❸ もしタイマーが「60秒」を超えたらタイムアップ！
         if (timer >= 60.0f)
         {
             isGameClear = true; // タイマーを止めるためにフラグをONにする
