@@ -22,23 +22,36 @@ public class Card : MonoBehaviour
     // ボタンがクリックされたときに実行される
     public void OnClickCard()
     {
-        
-        if (Object.FindFirstObjectByType<GameManager>().IsLocking == true)// 画面のレフェリーを探して、「いまロック中？」と聞く
-        {
-            return;// もしロック中（true）だったら、この下の処理を何もせずに「帰れ（return）」と命じる！
-        }
 
-        if (cardText.text != "?")// もし、今の文字が「?」じゃないなら（すでに数字がめくられているなら）無視して帰る！
+        // 画面のレフェリー（GameManager）を一旦変数に入れておく
+        GameManager gm = Object.FindFirstObjectByType<GameManager>();
+
+        // 💡【新設！】ゲームがまだ「開始前（のこり60秒で停止中）」なら無視して帰る！
+        if (gm != null && gm.timerText.text.Contains("60.0秒"))
         {
             return;
         }
 
-        cardImage.color = flippedColor;// 安全確認が「すべてセーフ！」とわかってから、初めて色を黄色にする！！！
+        // 画面のレフェリーを探して、「いまロック中？」と聞く
+        if (gm != null && gm.IsLocking == true)
+        {
+            return; // もしロック中（true）だったら、この下の処理を何もせずに「帰れ（return）」と命じる！
+        }
 
-        cardText.text = cardNumber.ToString();// クリックされたら、文字を「？」から「自分の数字」に書き換える！
-        Object.FindFirstObjectByType<GameManager>().CardFlipped(this);// 画面にいるGameManagerを探して、「めくられたよ！」と報告する
+        if (cardText.text != "?") // もし、今の文字が「?」じゃないなら（すでに数字がめくられているなら）無視して帰る！
+        {
+            return;
+        }
+
+        cardImage.color = flippedColor; // 安全確認が「すべてセーフ！」とわかってから、初めて色を黄色にする！！！
+
+        cardText.text = cardNumber.ToString(); // クリックされたら、文字を「？」から「自分の数字」に書き換える！
+
+        if (gm != null)
+        {
+            gm.CardFlipped(this); // 画面にいるGameManagerを探して、「めくられたよ！」と報告する
+        }
         Debug.Log("めくったカードの数字は: " + cardNumber);
-
     }
 
    

@@ -6,6 +6,6 @@ public class TitleManager : MonoBehaviour
     // ボタンが押されたときに呼ばれる命令
     public void OnStartButton()
     {
-        SceneManager.LoadScene("GameScene");// 「GameScene」という名前のシーンに移動して!
+        SceneManager.LoadScene("StageSelectScene");// 「GameScene」という名前のシーンに移動して!
     }
 }

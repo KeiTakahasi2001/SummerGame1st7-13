@@ -12,8 +12,17 @@ EditorBuildSettings:
     path: Assets/StartScene.unity
     guid: cfcdb48dc9b7ff844a24f68ba668db46
   - enabled: 1
-    path: Assets/GameScene.unity
+    path: Assets/StageSelectScene.unity
+    guid: 67d02c89a96acf54b9e573e3842a6e7f
+  - enabled: 1
+    path: Assets/Easy_GameScene.unity
+    guid: 4b3bfac62a8b89e43810fb400636da81
+  - enabled: 1
+    path: Assets/Normal_GameScene.unity
     guid: be5d974de15befe47931d637f47c37fd
+  - enabled: 1
+    path: Assets/Hard_GameScene.unity
+    guid: 349c12c8633224c45ad7c84ace5d3a32
   - enabled: 1
     path: Assets/ClearScene.unity
     guid: 4bb5a6a1d4e6b7546ac80093c5840fc0
